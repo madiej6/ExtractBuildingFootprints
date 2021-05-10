@@ -10,4 +10,4 @@ This code will convert the Microsoft building footprints from geojson format to 
 
 3. Create new conda environment with Python 3 and install requirements.txt
 
-4. From new conda environment, run `json_to_shp_conversion.py`
+4. From new conda environment, cd into repo root folder and run `json_to_shp_conversion.py`
