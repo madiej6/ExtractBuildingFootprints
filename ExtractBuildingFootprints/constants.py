@@ -1,0 +1,1 @@
+URL_TEMPLATE = "https://usbuildingdata.blob.core.windows.net/usbuildings-v2/{}.geojson.zip"

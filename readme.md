@@ -1,6 +1,6 @@
-## Introduction
+# ExtractBuildingFootprints
 
-This code will convert the Microsoft building footprints from geojson format to shapefile format using open source Python libraries.
+Download Microsoft building footprints their source in [github](https://github.com/Microsoft/USBuildingFootprints) to a DuckDB database using open source Python libraries.
 
 ## Instructions:
 

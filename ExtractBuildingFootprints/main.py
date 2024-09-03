@@ -1,15 +1,20 @@
 import glob
 import os
 import json
-import geopandas as gpd
-from shapely import geometry
+# import geopandas as gpd
+# from shapely import geometry
 import pandas as pd
-from fiona.crs import from_epsg
-import config
+# from fiona.crs import from_epsg
+import constants
+import duckdb
 
 
-def main(jsonfolder = config.jsonfolder, shpfolder = config.shpfolder):
-    os.chdir(jsonfolder)
+
+def main():
+
+    states_df = pd.read_csv("states.tsv", sep='\t')
+
+    # os.chdir(jsonfolder)
 
     list_json = glob.glob("*json")
 
