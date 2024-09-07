@@ -1,6 +1,4 @@
-import multiprocessing as mp
-from multiprocessing.pool import ThreadPool
-from joblib import Parallel, delayed
+from multiprocessing.pool import Pool
 import os
 import json
 from shapely import Point, Polygon
@@ -15,24 +13,22 @@ import requests
 import duckdb
 
 def create_db():
+    """Create local DuckDB database named 'buildings.db' and enable spatial extension."""
 
     # create a database file
-    spatial="LOAD spatial;"
-    if os.path.exists('buildings.db'):
-        spatial="INSTALL spatial;" + spatial
+    if not os.path.exists('buildings.db'):
+        spatial="INSTALL spatial; LOAD spatial;"
 
     con = duckdb.connect('buildings.db') 
-    con.execute(spatial)
+
+    # if database is new, enable duckdb spatial extension
+    if spatial:
+        con.execute(spatial)
 
     return con
 
-def check_tmp_dir():
-    total, used, free = shutil.disk_usage("/tmp") 
-    print("Total: %d GB" % (total // (2**30)))
-    print("Used: %d GB" % (used // (2**30)))
-    print("Free: %d GB" % (free // (2**30)))
-
 def download_single_state(state: str):
+    """Extract buildings to DuckDB table."""
 
     print(f'Running: {state}')
 
@@ -66,8 +62,6 @@ def download_single_state(state: str):
         extracted_files = os.listdir(temp_dir)
         print("Extracted files:", extracted_files)
 
-        # check remaining availability of temp dir
-        check_tmp_dir()
 
         # Load JSON data into a Python object
         with open(os.path.join(temp_dir, f"{state}.geojson")) as json_file:
@@ -121,24 +115,17 @@ def convert_geom(coords: List):
 
 def main():
 
-    # set up some multiprocessing vars
-    num_cpus = mp.cpu_count()
-    in_use_cpus = int(np.floor(num_cpus*0.7))
-
     states_df = pd.read_csv("states.tsv", sep='\t')
     states = states_df['State'].to_list()
     states=['District of Columbia', 'Delaware', 'Rhode Island', 'Connecticut', 'Maryland']
 
-    results = Parallel(n_jobs=2)(delayed(download_single_state)(state) for state in states[0:5])
-    # # Create a pool of processes based on the number of CPUs
-    # with ThreadPool(in_use_cpus) as pool:
-    #     # Run the process_item function on each item in the list
-    #     results = pool.map(download_single_state, states[0:5])
+    # set up multiprocessing
+    pool = Pool(processes=2)
 
-
-    # query the table
-    result = con.execute(f"SELECT COUNT(*) as count_bldgs FROM {state}").fetchdf()
-
+    results = []
+    for result in pool.map(download_single_state, states[0:3]):
+        results.append(result.get())
+    pool.close()
 
 
 if __name__ == "__main__":
