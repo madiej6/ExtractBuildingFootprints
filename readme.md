@@ -1,6 +1,6 @@
 # ExtractBuildingFootprints
 
-Download Microsoft building footprints their source in [github](https://github.com/Microsoft/USBuildingFootprints) to a DuckDB database using open source Python libraries.
+This program downloads and extracts Microsoft building footprints their source in [github](https://github.com/Microsoft/USBuildingFootprints) to a DuckDB database using open source Python libraries.
 
 ## Instructions:
 
