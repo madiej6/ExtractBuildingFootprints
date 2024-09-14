@@ -10,10 +10,12 @@ import shutil
 import zipfile
 import tempfile
 import requests
+import argparse
 import duckdb
 
 def create_db():
     """Create local DuckDB database named 'buildings.db' and enable spatial extension."""
+    spatial = None
 
     # create a database file
     if not os.path.exists('buildings.db'):
@@ -93,6 +95,8 @@ def transform(df: pd.DataFrame):
     # only save some columns
     df = df[['type', 'geometry_type', 'release', 'capture_dates_range', 'geom_wkt']]
 
+    return df
+
 
 def convert_geom(coords: List):
     """Convert list of coordinates to WKT geometry.
@@ -113,20 +117,23 @@ def convert_geom(coords: List):
         num_errors += 1
         return None
 
-def main():
+def main(state: str):
 
     states_df = pd.read_csv("states.tsv", sep='\t')
     states = states_df['State'].to_list()
-    states=['District of Columbia', 'Delaware', 'Rhode Island', 'Connecticut', 'Maryland']
 
-    # set up multiprocessing
-    pool = Pool(processes=2)
+    download_single_state(state=state)
 
-    results = []
-    for result in pool.map(download_single_state, states[0:3]):
-        results.append(result.get())
-    pool.close()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--state', 
+                        dest='state',
+                        default='District of Columbia',
+                        help='State to extract buildings for.')
+    
+    args = parser.parse_args()
+    state = args.state
+    main(state)
