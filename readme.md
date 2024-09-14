@@ -8,5 +8,5 @@ This program downloads and extracts Microsoft building footprints their source i
 
 2. Run program, providing the state. If no state is provided, the program will default to 'District of Columbia'.
 ```
-python main.py --state=Alabama
+python ExtractBuildingFootprints/main.py --state=Maryland
 ```
