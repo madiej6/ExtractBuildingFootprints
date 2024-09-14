@@ -2,6 +2,8 @@
 
 This program downloads and extracts Microsoft building footprints their source in [github](https://github.com/Microsoft/USBuildingFootprints) to a local DuckDB database using open source Python libraries.
 
+Given a state, this program does the following:
+
 ## Instructions:
 
 1. Install Python requirements.txt
@@ -10,3 +12,5 @@ This program downloads and extracts Microsoft building footprints their source i
 ```
 python ExtractBuildingFootprints/main.py --state=Maryland
 ```
+
+The program will 

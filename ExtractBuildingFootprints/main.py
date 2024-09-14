@@ -13,30 +13,16 @@ import duckdb
 
 def create_db():
     """Create local DuckDB database named 'buildings.db' and enable spatial extension."""
-    spatial = None
-
-    # create a database file
-    if not os.path.exists('buildings.db'):
-        spatial="INSTALL spatial; LOAD spatial;"
 
     con = duckdb.connect('buildings.db') 
 
-    # if database is new, enable duckdb spatial extension
-    if spatial:
-        con.execute(spatial)
+    # enable duckdb spatial extension
+    con.execute("INSTALL spatial; LOAD spatial;")
 
     return con
 
-def download_single_state(state: str):
+def download_single_state(state: str, con: duckdb.DuckDBPyConnection):
     """Extract buildings to DuckDB table."""
-
-    print(f'Running: {state}')
-
-    # remove spaces
-    state=state.replace(' ', '')
-
-    # set up db connection
-    con = create_db()
 
     # get the state's download url
     download_url = URL_TEMPLATE.format(state)
@@ -78,6 +64,8 @@ def download_single_state(state: str):
 
         # kill the directory and it's contents
         shutil.rmtree(temp_dir)
+
+    return con
         
         
 def transform(df: pd.DataFrame):
@@ -117,10 +105,24 @@ def convert_geom(coords: List):
 
 def main(state: str):
 
+    print(f'Running: {state}')
+
+    # remove spaces
+    state=state.replace(' ', '')
+
+    # set up db connection
+    con = create_db()
+
+    # list of states that have building footprints
     states_df = pd.read_csv("states.tsv", sep='\t')
     states = states_df['State'].to_list()
 
-    download_single_state(state=state)
+    assert state in states, "State name doesn't appear to be formatted correctly. Check in 'states.tsv' for proper formatting."
+
+    download_single_state(state, con)
+
+    bldg_count = con.sql(f"SELECT COUNT(*) FROM {state}").fetchall()
+    print(f"{state} building count: {bldg_count[0][0]}")
 
 
 
