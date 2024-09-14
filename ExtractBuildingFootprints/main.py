@@ -1,11 +1,9 @@
-from multiprocessing.pool import Pool
 import os
 import json
 from shapely import Point, Polygon
 import pandas as pd
 from typing import List
 from constants import URL_TEMPLATE
-import numpy as np
 import shutil
 import zipfile
 import tempfile
