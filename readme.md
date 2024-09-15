@@ -3,7 +3,7 @@
 This program downloads and extracts Microsoft building footprints their source in [github](https://github.com/Microsoft/USBuildingFootprints) to a local DuckDB database using open source Python libraries.
 
 Given a state, this program does the following:
-1. Download/extract the building footprints for the given state and load them to a DuckDB database named 'buildings.db'
+1. Download & extract the building footprints for the given state and load them to a DuckDB database named `buildings.db`
 2. Print the number of buildings that exist for the state.
 
 The database `buildings.db` will remain persistent in the working directory of the repo, so you can  run queries on the database and tables (see below):
